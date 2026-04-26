@@ -1,106 +1,145 @@
 # CreatorProof
 
-CreatorProof is a cross-platform Flutter application that helps creators publish content with verifiable proof metadata.  
-It combines content publishing, identity signals, and blockchain-backed proof anchoring into one user experience.
+CreatorProof is a Flutter-powered platform for creators to publish digital content with transparent proof-of-authorship metadata.  
+It combines media publishing, social discovery, and blockchain anchoring into one trust-first creator experience.
 
-## Overview
+---
 
-The platform is designed for creators who want stronger attribution and trust around their digital work.  
-Each content item can be paired with proof details, on-chain transaction references, and a certificate-style view for verification workflows.
+## Problem Statement
 
-## Core Capabilities
+Digital creators often struggle to prove ownership and originality of their work across platforms.  
+Traditional social apps optimize for reach, but not for authenticity and verifiable attribution.
 
-- Creator authentication with Firebase and Google Sign-In
-- Global feed with creator profiles, engagement, and comments
-- Media upload flow with Cloudinary integration
-- Proof record creation and storage in Firestore
-- Blockchain anchoring workflow using Polygon Amoy (via `web3dart`)
-- Verification-focused views including proof and certificate screens
-- Notifications and creator dashboard surfaces
+CreatorProof addresses this gap by enabling:
 
-## Product Architecture
+- on-chain verifiable proof references
+- creator identity + portfolio visibility
+- transparent proof records linked to published content
 
-CreatorProof follows a feature-first Flutter structure with clear separation between UI, state, and data services:
+---
 
-- **UI layer** in `lib/features/`: screens and widgets by feature domain
-- **State layer** with `provider`: app-level theme and auth state
-- **Data layer** in `lib/data/`:
-  - repositories for Firestore-backed entities (users, posts, proofs, comments, notifications)
-  - services for Cloudinary uploads, wallet/key handling, and blockchain transactions
-- **Core layer** in `lib/core/`: routes, theme system, constants, and shared app foundations
-- **Shared layer** in `lib/shared/`: reusable widgets and models used across features
+## Solution Overview
 
-## Key User Flows
+CreatorProof combines:
 
-### Creator Journey
+- a **Flutter frontend** for cross-platform creator and viewer experiences
+- a **Firebase data layer** for authentication, profiles, posts, proofs, comments, and notifications
+- a **Cloudinary media pipeline** for asset uploads
+- a **Polygon Amoy anchoring layer** for blockchain proof transactions
 
-1. Authenticate (email/password or Google)
-2. Upload media content
-3. Generate and attach proof metadata
-4. Anchor proof reference through blockchain transaction
-5. Publish and share content with verification context
+Each published work can carry proof metadata, transaction context, and certificate-style verification views.
 
-### Trust and Verification Journey
+---
 
-1. Open a creator post or proof detail
-2. Review proof metadata and transaction references
-3. Access certificate-style representation for validation
-4. Use verification views to inspect authenticity signals
+## Architecture (Visual Representation)
+
+```mermaid
+flowchart LR
+    A[Creator / Viewer] --> B[Flutter App]
+    B --> C[Firebase Auth]
+    B --> D[Cloud Firestore]
+    B --> E[Cloudinary Upload API]
+    B --> F[Blockchain Service Layer]
+    F --> G[Polygon Amoy Network]
+```
+
+---
+
+## Publish + Proof Flow (Visual Representation)
+
+```mermaid
+sequenceDiagram
+    participant U as Creator
+    participant APP as Flutter App
+    participant CLD as Cloudinary
+    participant BC as Blockchain Service
+    participant CH as Polygon Amoy
+    participant DB as Firestore
+
+    U->>APP: Select media and post details
+    APP->>CLD: Upload file
+    CLD-->>APP: Hosted media URL
+    APP->>BC: Build and submit proof anchor transaction
+    BC->>CH: Write transaction with proof metadata
+    CH-->>BC: Transaction hash / block context
+    APP->>DB: Save post + proof + tx references
+    DB-->>APP: Stream updated content
+    APP-->>U: Post appears with proof details
+```
+
+---
 
 ## Tech Stack
 
-- **Framework:** Flutter (Dart)
-- **State Management:** `provider`
-- **Routing:** `go_router`
-- **Backend:** Firebase (`firebase_auth`, `cloud_firestore`, `firebase_core`)
-- **Media Storage:** Cloudinary (`http` multipart upload)
-- **Blockchain:** `web3dart`, `crypto`, wallet utilities
-- **Local Secure Storage:** `flutter_secure_storage`
-- **UI/UX Libraries:** `google_fonts`, `flutter_animate`, `shimmer`, `cached_network_image`, and media playback packages
+| Layer | Technology | Purpose |
+|---|---|---|
+| Frontend | Flutter + Dart | Cross-platform UI (mobile, web, desktop) |
+| State Management | `provider` | App-wide state for auth/theme and reactive updates |
+| Routing | `go_router` | Declarative route management and navigation |
+| Authentication | Firebase Auth + Google Sign-In | Identity and session handling |
+| Database | Cloud Firestore | Posts, users, proofs, comments, notifications |
+| Media | Cloudinary + `http` multipart | Upload and host creator media |
+| Blockchain | `web3dart` + `crypto` | Proof anchoring and transaction metadata |
+| Secure Local Storage | `flutter_secure_storage` | Wallet key material and sensitive app values |
+| UI/UX Packages | `google_fonts`, `flutter_animate`, `shimmer`, `cached_network_image` | Visual polish and smooth user experience |
 
-## Project Structure
+---
 
-```text
-lib/
-  app.dart
-  main.dart
-  core/
-    routes/
-    theme/
-    constants/
-    utils/
-  data/
-    providers/
-    repositories/
-    services/
-  features/
-    auth/
-    main/
-    home/
-    upload/
-    portfolio/
-    profile/
-    proof/
-    verify/
-    notifications/
-    dashboard/
-    settings/
-  shared/
-    models/
-    widgets/
+## Project Structure (Architecture View)
+
+```mermaid
+flowchart TB
+    A[creator_proof]
+    A --> B[lib]
+    A --> C[android / ios / web / windows / macos / linux]
+    A --> D[pubspec.yaml]
+    A --> E[firebase.json]
+    A --> F[README.md]
+
+    B --> B1[main.dart]
+    B --> B2[app.dart]
+    B --> B3[core]
+    B --> B4[data]
+    B --> B5[features]
+    B --> B6[shared]
+
+    B3 --> B31[routes]
+    B3 --> B32[theme]
+    B3 --> B33[constants + utils]
+
+    B4 --> B41[providers]
+    B4 --> B42[repositories]
+    B4 --> B43[services]
+
+    B5 --> B51[auth]
+    B5 --> B52[home]
+    B5 --> B53[upload]
+    B5 --> B54[portfolio]
+    B5 --> B55[profile]
+    B5 --> B56[proof]
+    B5 --> B57[verify]
+    B5 --> B58[notifications / dashboard / settings]
 ```
 
-## Platform Support
+---
 
-CreatorProof includes Flutter runners for:
+## Key Features
 
-- Android
-- iOS
-- Web
-- Windows
-- macOS
-- Linux
+- Creator login and onboarding with Firebase authentication
+- Global feed for content discovery and social interactions
+- Upload flow with media hosting and post creation
+- Blockchain-backed proof anchoring for published works
+- Proof details and certificate view for transparency
+- Portfolio and profile surfaces for creator identity
+- Notifications and dashboard screens for activity insights
+- Light/dark theming with modern Flutter UI components
 
-## Vision
+---
 
-CreatorProof is built to make digital authorship more transparent, trackable, and trustworthy for modern creators.
+## Author
+
+Built with focus and creativity by **Shreyash-devs**.
+
+- [GitHub](https://github.com/shreyash-devs)
+- [LinkedIn](https://www.linkedin.com/in/shreyashdubewar)
+- shreyashdevs.work@gmail.com
